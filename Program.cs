@@ -1,6 +1,11 @@
 ﻿using Estoque.Database;
+using Estoque.Models;
+using Microsoft.IdentityModel.Tokens;
 
 using DataContext db = new();
+
+Armazenamento estoque = new();
+
 
 void LogoProduto()
 {
@@ -87,6 +92,7 @@ void ExibirOpcoesDoProduto()
 {
     Console.Clear();
     LogoProduto();
+    Console.WriteLine("Digite 1 para registrar um produto");
     Console.WriteLine("Digite 6 para voltar ao menu principal");
     Console.WriteLine("Digite 0 para sair da aplicação");
 
@@ -169,12 +175,52 @@ void ExibirOpcoesDoEstoque()
     }
 }
 
-void AtualizarProduto()
+void RegistrarProduto()
+{
+    ExibirTituloDaOpcao("Registrar Produto");
+
+    Console.Write("Digite o nome do produto que deseja adicionar: ");
+    string nomeProduto = Console.ReadLine()!;
+
+    if (nomeProduto.IsNullOrEmpty()) 
+    {
+        Console.WriteLine("O nome produto deve ser preenchido");
+        Thread.Sleep(2900);
+        Console.Clear();
+        RegistrarProduto();
+    }
+
+    Console.Write("\nDigite o preço do produto: ");
+    double precoProduto = double.Parse(Console.ReadLine()!);
+
+    if(precoProduto < 0)
+    {
+        Console.WriteLine("O preço do produto precisa ser informado");
+        Thread.Sleep(2900);
+        Console.Clear();
+        RegistrarProduto();
+    }
+
+    Produto p = new()
+    {
+        Nome = nomeProduto,
+        Preco = precoProduto
+    };
+
+    db.Produto.Add(p);
+    db.SaveChanges();
+
+    Console.WriteLine($"O produto {p.Nome} com o valor {precoProduto}R$ foi adicionado com sucesso");
+    Thread.Sleep(3500);
+    ExibirOpcoesDoProduto();
+}
+
+void RemoverProduto()
 {
     throw new NotImplementedException();
 }
 
-void RemoverProduto()
+void AtualizarProduto()
 {
     throw new NotImplementedException();
 }
@@ -189,9 +235,6 @@ void ListarTodosProduto()
     throw new NotImplementedException();
 }
 
-void RegistrarProduto()
-{
-    throw new NotImplementedException();
-}
+
 
 ExibirOpcoesDoMenu();
