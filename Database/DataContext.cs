@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
 
-namespace Estoque
+namespace Estoque.Database;
+
+public class DataContext : DbContext
 {
-    internal class DataContext
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
+        optionsBuilder.UseSqlServer("Server=DINKZ;Database=Estoque;User Id=sa;Password=Dev$123;Encrypt=False;");
     }
+
 }
