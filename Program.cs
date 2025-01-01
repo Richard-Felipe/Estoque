@@ -92,9 +92,12 @@ void ExibirOpcoesDoProduto()
 {
     Console.Clear();
     LogoProduto();
-    Console.WriteLine("Digite 1 para registrar um produto");
-    Console.WriteLine("Digite 6 para voltar ao menu principal");
-    Console.WriteLine("Digite 0 para sair da aplicação");
+    Console.WriteLine("Digite 1 - para Listar todos os produtos");
+    Console.WriteLine("Digite 2 - para registrar um produto");
+    Console.WriteLine("Digite 3 - para remover um produto");
+    Console.WriteLine("Digite 4 - para atualizar um produto");
+    Console.WriteLine("Digite 5 - para voltar ao menu principal");
+    Console.WriteLine("Digite 0 - para sair da aplicação");
 
     Console.Write("\nDigite a sua opção: ");
     string opcaoEscolhida = Console.ReadLine()!;
@@ -103,21 +106,18 @@ void ExibirOpcoesDoProduto()
     switch (opcaoEscolhidaNumerica)
     {
         case 1:
-            RegistrarProduto();
-            break;
-        case 2:
             ListarTodosProduto();
             break;
-        case 3:
-            AdicionarProduto();
+        case 2:
+            RegistrarProduto();
             break;
-        case 4:
+        case 3:
             RemoverProduto();
             break;
-        case 5:
+        case 4:
             AtualizarProduto();
             break;
-        case 6:
+        case 5:
             ExibirOpcoesDoMenu();
             break;
         case 0:
@@ -145,24 +145,24 @@ void ExibirOpcoesDoEstoque()
 
     switch (opcaoEscolhidaNumerica)
     {
-        case 1:
-            RegistrarProduto();
-            break;
-        case 2:
-            ListarTodosProduto();
-            break;
-        case 3:
-            AdicionarProduto();
-            break;
-        case 4:
-            RemoverProduto();
-            break;
-        case 5:
-            AtualizarProduto();
-            break;
-        case 6:
-            ExibirOpcoesDoMenu();
-            break;
+        //case 1:
+        //    RegistrarProduto();
+        //    break;
+        //case 2:
+        //    RemoverProduto();
+        //    break;
+        //case 3:
+        //    AdicionarProduto();
+        //    break;
+        //case 4:
+        //    ListarTodosProduto();
+        //    break;
+        //case 5:
+        //    AtualizarProduto();
+        //    break;
+        //case 6:
+        //    ExibirOpcoesDoMenu();
+        //    break;
         case 0:
             Console.WriteLine("Tchau tchau :)");
             break;
@@ -180,7 +180,7 @@ void RegistrarProduto()
     ExibirTituloDaOpcao("Registrar Produto");
 
     Console.Write("Digite o nome do produto que deseja adicionar: ");
-    string nomeProduto = Console.ReadLine()!;
+    string nomeProduto = Console.ReadLine()!.ToLower();
 
     if (nomeProduto.IsNullOrEmpty()) 
     {
@@ -195,7 +195,7 @@ void RegistrarProduto()
 
     if(precoProduto < 0)
     {
-        Console.WriteLine("O preço do produto precisa ser informado");
+        Console.WriteLine("O preço do produto precisa ser informado e não pode ser negativo");
         Thread.Sleep(2900);
         Console.Clear();
         RegistrarProduto();
@@ -210,31 +210,99 @@ void RegistrarProduto()
     db.Produto.Add(p);
     db.SaveChanges();
 
-    Console.WriteLine($"O produto {p.Nome} com o valor {precoProduto}R$ foi adicionado com sucesso");
+    Console.WriteLine($"\nO produto {p.Nome} com o valor {p.Preco}R$ foi adicionado com sucesso");
     Thread.Sleep(3500);
     ExibirOpcoesDoProduto();
 }
 
 void RemoverProduto()
 {
-    throw new NotImplementedException();
+    ExibirTituloDaOpcao("Remover Produto");
+
+    Console.Write("Digite o nome do produto que deseja remover: ");
+    string nomeProduto = Console.ReadLine()!.ToLower();
+
+    var produtodb = db.Produto.FirstOrDefault(n => n.Nome == nomeProduto);
+
+    if(produtodb is null)
+    {
+        Console.WriteLine("O produto não esta cadastrado no sistema");
+        Thread.Sleep(3500);
+        Console.Clear();
+        RemoverProduto();
+    }
+    
+    db.Produto.Remove(produtodb);
+    db.SaveChanges();
+
+    Console.WriteLine($"\nO produto {produtodb.Nome} foi removido com sucesso");
+    Thread.Sleep(3500);
+    ExibirOpcoesDoProduto();
 }
 
 void AtualizarProduto()
 {
-    throw new NotImplementedException();
-}
+    ExibirTituloDaOpcao("Atualizar Produto");
 
-void AdicionarProduto()
-{
-    throw new NotImplementedException();
+    Console.Write("Digite o nome do produto que deseja Alterar: ");
+    string nomeProduto = Console.ReadLine()!.ToLower();
+
+    var produtodb = db.Produto.FirstOrDefault(n => n.Nome == nomeProduto);
+
+    if (produtodb is null)
+    {
+        Console.WriteLine("O produto não esta cadastrado no sistema");
+        Thread.Sleep(3500);
+        Console.Clear();
+        AtualizarProduto();
+    }
+
+    Console.Write("\nDeseja alterar o nome do produto ? Digite 's' para sim o 'n' para não: ");
+    string opcaoEscolhida = Console.ReadLine()!.ToLower();
+
+    if(opcaoEscolhida == "s" || opcaoEscolhida == "sim")
+    {
+        Console.Write("Digite o novo nome do produto: ");
+        string novoNome = Console.ReadLine()!.ToLower();
+
+        produtodb.Nome = novoNome;
+    }
+
+    Console.Write($"\nDigite o novo preço do produto {produtodb.Nome}: ");
+    double novoPreco = double.Parse(Console.ReadLine()!);
+
+    if (novoPreco < 0)
+    {
+        Console.WriteLine("O preço do produto precisa ser informado e não pode ser negativo");
+        Thread.Sleep(2900);
+        Console.Clear();
+        AtualizarProduto();
+    }
+
+    produtodb.Preco = novoPreco;
+
+    db.Produto.Update(produtodb);
+    db.SaveChanges();
+
+    Console.WriteLine($"\nO produto {produtodb.Nome} com o valor {produtodb.Preco}R$ foi alterado com sucesso");
+    Thread.Sleep(3500);
+    ExibirOpcoesDoProduto();
 }
 
 void ListarTodosProduto()
 {
-    throw new NotImplementedException();
+    ExibirTituloDaOpcao("Lista de todos os produtos cadastrados no sistema");
+
+    var produtos = db.Produto.ToList();
+
+    foreach (var produto in produtos)
+    {
+        Console.WriteLine($"Produto: {produto.Nome} - Valor: {produto.Preco}R$");
+    }
+
+    Console.Write("\nDigite qualquer tecla para voltar ao menu principal");
+    Console.ReadKey();
+    ExibirOpcoesDoProduto();
 }
-
-
 
 ExibirOpcoesDoMenu();

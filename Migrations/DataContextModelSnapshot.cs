@@ -34,7 +34,7 @@ namespace Estoque.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Estoque");
+                    b.ToTable("Estoque", (string)null);
                 });
 
             modelBuilder.Entity("Estoque.Models.Produto", b =>
@@ -59,7 +59,7 @@ namespace Estoque.Migrations
 
                     b.HasIndex("ArmazenamentoId");
 
-                    b.ToTable("Produto");
+                    b.ToTable("Produto", (string)null);
                 });
 
             modelBuilder.Entity("Estoque.Models.Produto", b =>
